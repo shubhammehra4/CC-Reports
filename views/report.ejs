@@ -1,0 +1,111 @@
+<%- include('partials/header') %>
+
+
+
+<div class="jumbotron text-center">
+  <div class="container">
+    <div class="mb-4 flex justify-content-end bg-red">
+      <a class="btn btn-light btn-lg" href="/logout" role="button">Log Out</a>
+    </div>
+    
+    <h4 class="display-3">Reports</h1>
+    <hr>
+
+    <table class="table table-striped table-dark">
+      <tr>
+        <th>Employee ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Date of Birth</th>
+        <th>Contact Number</th>
+        <th>Job Role</th>
+        <th>Monthly Salary</th>
+        <th>Yearly Bonus</th>
+      </tr>
+      <tr>
+        <td><%= employee.employee_id %></td>
+        <td><%= employee.first_name %></td>
+        <td><%= employee.last_name %></td>
+        <td><%= new Date(employee.date_of_birth).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',}) %></td>
+        <td><%= employee.contact_number %></td>
+        <td><%= employee.job_role %></td>
+        <td><%= employee.monthly_salary %></td>
+        <td><%= employee.yearly_bonus %></td>
+      </tr>
+    </table>
+
+
+    <h4 class="display-3 my-5">Insert Salary Details</h1>
+    <hr>
+
+    <form action="/salary" method="POST" class="w-50">
+      <div class="form-group">
+        <label for="job_role">Job Role</label>
+        <input type="text" class="form-control" name="job_role">
+      </div>
+      
+      <div class="form-group">
+        <label for="monthly_salary">Monthly Salary</label>
+        <input type="text" class="form-control" name="monthly_salary">
+      </div>     
+
+      <div class="form-group">
+        <label for="yearly_bonus">Yearly Bonus</label>
+        <input type="text" class="form-control" name="yearly_bonus">
+      </div>
+
+      <button type="submit" class="btn btn-dark">Insert</button>
+    </form>
+
+    <hr>
+
+    <!-- Fetch Employee details using empoyee_id -->
+    <form class="w-25 my-4" id="salary-form">
+      <div class="form-group" >
+        <label for="employee_id">Employee ID</label>
+        <input type="number" class="form-control" name="employee_id">
+        <button type="submit" class="btn btn-dark my-2">Seacrh</button>
+      </div>
+    </form>
+    
+
+    <table class="table table-striped table-dark">
+      <tr class="">
+        <th>Employee ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Date of Birth</th>
+        <th>Contact Number</th>
+        <th>Job Role</th>
+        <th>Monthly Salary</th>
+        <th>Yearly Bonus</th>
+        <th>Total Annual Salary</th>
+      </tr>
+      <tr id="salary">
+      </tr>
+    </table>
+   
+  </div>
+</div>
+
+
+<script>
+  const form = document.querySelector('#salary-form');
+
+  
+  form.addEventListener("submit", async (e) =>{
+    e.preventDefault();
+    const formdata = new FormData(form);
+    const res = await fetch(`/salary/${formdata.get("employee_id")}`);
+    const data = await res.json()
+
+    const tableRow = document.querySelector("#salary");
+
+    Object.values(data).forEach((d,i)=> {     
+      const cell = tableRow.insertCell()
+      cell.textContent = d;
+    })
+  })
+</script>
+
+<%- include('partials/footer') %>
